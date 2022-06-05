@@ -14,8 +14,9 @@ var _weatherDataJson = [];
 class Graph extends StatelessWidget{
   final List<charts.Series<dynamic, DateTime>> seriesList;
   final bool animate;
+  final String graphMode;
 
-  const Graph(this.seriesList, {required this.animate});
+  const Graph(this.seriesList, {required this.animate, required this.graphMode});
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +24,18 @@ class Graph extends StatelessWidget{
       seriesList,
       animate: animate,
       dateTimeFactory: const charts.LocalDateTimeFactory(),
+      behaviors: [
+        charts.ChartTitle('time',
+            behaviorPosition: charts.BehaviorPosition.bottom,
+            titleOutsideJustification:
+            charts.OutsideJustification.middleDrawArea
+        ),
+        charts.ChartTitle(graphMode,
+            behaviorPosition: charts.BehaviorPosition.start,
+            titleOutsideJustification:
+            charts.OutsideJustification.middleDrawArea
+        ),
+      ],
     );
   }
 
@@ -61,8 +74,8 @@ class _GraphWithDropdown extends State{
           },
         ),
         SizedBox(
-          height: size.height * .35, // Set size of graph here (35% of screen)
-          child: Graph(_createSampleData(), animate: false),
+          height: size.height * .45, // Set size of graph here (35% of screen)
+          child: Graph(_createSampleData(), animate: false, graphMode: selectedMode,),
         ),
         DropdownButton(
         value: selectedDate,
@@ -159,6 +172,7 @@ class _MyAppState extends State<MyApp> {
         _weatherDataJson = data;
         isLoaded = true;
       });
+
     } catch (err) {
       print("Error: ${err}");
     }
@@ -173,15 +187,19 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     //final double width = MediaQuery.of(context).size;
-    return const MaterialApp(
+    return MaterialApp(
         home: Home(),
         title: "Greenhouse Weather",
     );
   }
 }
 
-class Home extends StatelessWidget {
-  const Home({Key? key}) : super(key: key);
+class Home extends StatefulWidget{
+@override
+_Home createState() => _Home();
+}
+
+class _Home extends State {
 
   @override
   Widget build(BuildContext context){
@@ -201,12 +219,12 @@ class Home extends StatelessWidget {
                     color: Colors.blue,
                     width: .85,
                     height: 90,
-                    data: getInfo("temperature", "Temperature:\n", "°C")),
+                    data: getInfo("temperature", "Temperature:", "°C")),
                 InfoBox(
                     color: Colors.red,
                     width: .85,
                     height: 90,
-                    data: getInfo("humidity", "Humidity:\n", "%"))
+                    data: getInfo("humidity", "Humidity:", "%"))
               ],
             ),
             SizedBox(height: size.width * .03),
@@ -217,7 +235,7 @@ class Home extends StatelessWidget {
                     color: Colors.green,
                     width: .5,
                     height: 90,
-                    data: getInfo("created_on", "Recorded At:\n", ""))
+                    data: getInfo("created_on", "Recorded At:", ""))
               ],
             ),
             SizedBox(height: size.width * .05),
@@ -228,16 +246,35 @@ class Home extends StatelessWidget {
   }
 }
 
-String getInfo(String infoId, String prefix, String suffix){
+List<Text> getInfo(String infoId, String prefix, String suffix){
   if(!isLoaded) {
-    return "Loading...";
+    return [const Text("Loading...", textAlign: TextAlign.center,
+        style: TextStyle(
+            fontSize: 19,
+            fontWeight: FontWeight.w500))];
   }
 
   if(infoId == "created_on"){
-    return "$prefix${formatDate(_weatherDataJson[_weatherDataJson.length - 1][infoId])}$suffix";
+    return [
+      Text(prefix, style: const TextStyle(
+        fontSize: 19,
+        fontWeight: FontWeight.w400)),
+      Text("${formatDate(_weatherDataJson[_weatherDataJson.length - 1][infoId])}$suffix", textAlign: TextAlign.center,
+        style: const TextStyle(
+            fontSize: 19,
+            fontWeight: FontWeight.w500))
+    ];
   }
 
-  return "$prefix${_weatherDataJson[_weatherDataJson.length - 1][infoId].toString()}$suffix";
+  return [
+    Text(prefix, style: const TextStyle(
+      fontSize: 19,
+      fontWeight: FontWeight.w400)),
+    Text("${_weatherDataJson[_weatherDataJson.length - 1][infoId].toString()}$suffix", textAlign: TextAlign.center,
+      style: const TextStyle(
+          fontSize: 30,
+          fontWeight: FontWeight.w500))
+  ];
 }
 
 class InfoBox extends StatelessWidget {
@@ -251,7 +288,7 @@ class InfoBox extends StatelessWidget {
   final Color color;
   final double width;
   final double height;
-  final String data;
+  final List<Text> data;
 
   @override
   Widget build(BuildContext context) {
@@ -263,13 +300,12 @@ class InfoBox extends StatelessWidget {
               color: color,
               borderRadius: const BorderRadius.all(Radius.circular(10))),
             height: height,
-            child: Center(
-              child: Text(data, textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w500)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: data,
             ),
-          )),
+            ),
+          ),
     );
   }
 }
