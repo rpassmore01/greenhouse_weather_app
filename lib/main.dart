@@ -217,7 +217,7 @@ String getInfo(String infoId, String prefix, String suffix){
   }
 
   if(infoId == "created_on"){
-    return "$prefix${formatDate(_weatherDataJson[_weatherDataJson.length - 1][infoId].toString())}$suffix";
+    return "$prefix${formatDate(_weatherDataJson[_weatherDataJson.length - 1][infoId])}$suffix";
   }
 
   return "$prefix${_weatherDataJson[_weatherDataJson.length - 1][infoId].toString()}$suffix";

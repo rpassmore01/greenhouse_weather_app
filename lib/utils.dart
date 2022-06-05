@@ -1,15 +1,8 @@
 // Date & Time Formatting
 String formatDate(String date){
   try{
-    DateTime dateTime = DateTime(
-        int.parse(date.substring(0, 4)),
-        int.parse(date.substring(5, 7)),
-        int.parse(date.substring(8, 10)),
-        int.parse(date.substring(11, 13)),
-        int.parse(date.substring(14, 16)));
-
+    DateTime dateTime = DateTime.parse(date);
     return "${getDayName(dateTime.weekday)} ${getDayMonth(dateTime.month)} ${dateTime.day}\n${get24HourTime(dateTime.hour, dateTime.minute)}";
-
   }catch(err) {
     return "ERROR";
   }
