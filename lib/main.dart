@@ -43,12 +43,12 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context){
     return MaterialApp(
       home: Scaffold(
-        body: ListView.builder(
-            itemCount: _weatherDataJson.length,
-            itemBuilder: (context, i) {
-              final currWeatherData = _weatherDataJson[i];
-              return Text("Temperature: ${currWeatherData["temperature"]}\n Humidity: ${currWeatherData["humidity"]}");
-            }),
+        appBar: AppBar(
+          title: const Text("Greenhouse Weather"),
+        ),
+        body: Center(
+          child: Text(_weatherDataJson[_weatherDataJson.length -1].toString()),
+        )
       )
     );
   }
