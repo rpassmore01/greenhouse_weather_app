@@ -28,11 +28,11 @@ class Graph extends StatelessWidget{
 
 }
 
-class TimeSeriesSales {
+class GenericTimeSeries {
   final DateTime time;
-  final int temperature;
+  final int dataPoint;
 
-  TimeSeriesSales(this.time, this.temperature);
+  GenericTimeSeries(this.time, this.dataPoint);
 }
 
 class GraphWithDropdown extends StatefulWidget{
@@ -76,8 +76,8 @@ class _GraphWithDropdown extends State{
     );
   }
 
-   List<charts.Series<TimeSeriesSales, DateTime>> _createSampleData() {
-    final List<TimeSeriesSales> data = [];
+   List<charts.Series<GenericTimeSeries, DateTime>> _createSampleData() {
+    final List<GenericTimeSeries> data = [];
     Duration duration = const Duration(days: 0);
 
     switch(selectedDate){
@@ -99,17 +99,17 @@ class _GraphWithDropdown extends State{
       final today = DateTime.now();
       DateTime currDateTime = DateTime.parse(_weatherDataJson[i]['created_on']);
 
-      if(today.subtract(duration).isBefore(currDateTime)){
-        data.add(TimeSeriesSales(currDateTime, _weatherDataJson[i][selectedMode]));
+      if(today.subtract(duration).isBefore(currDateTime) || duration.inDays == 0){
+        data.add(GenericTimeSeries(currDateTime, _weatherDataJson[i][selectedMode]));
       }
     }
 
     return [
-      charts.Series<TimeSeriesSales, DateTime>(
+      charts.Series<GenericTimeSeries, DateTime>(
         id: 'Sales',
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        domainFn: (TimeSeriesSales sales, _) => sales.time,
-        measureFn: (TimeSeriesSales sales, _) => sales.temperature,
+        domainFn: (GenericTimeSeries weather, _) => weather.time,
+        measureFn: (GenericTimeSeries weather, _) => weather.dataPoint,
         data: data,
       )
     ];
