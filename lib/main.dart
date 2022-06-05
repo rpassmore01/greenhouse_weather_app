@@ -47,8 +47,10 @@ class _MyAppState extends State<MyApp> {
           title: const Text("Greenhouse Weather"),
         ),
         body: Center(
-          child: Text(_weatherDataJson[_weatherDataJson.length -1].toString()),
-        )
+          child: Text("Current temperature: ${_weatherDataJson[_weatherDataJson.length -1]['temperature'].toString()}\n"
+              "Current humidity: ${_weatherDataJson[_weatherDataJson.length -1]['humidity'].toString()}\n"
+              "Taken at: ${_weatherDataJson[_weatherDataJson.length -1]['created_on'].toString().substring(11,19)}"),
+        ),
       )
     );
   }
