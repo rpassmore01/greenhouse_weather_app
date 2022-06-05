@@ -30,9 +30,9 @@ class Graph extends StatelessWidget{
 
 class TimeSeriesSales {
   final DateTime time;
-  final int sales;
+  final int temperature;
 
-  TimeSeriesSales(this.time, this.sales);
+  TimeSeriesSales(this.time, this.temperature);
 }
 
 class GraphWithDropdown extends StatefulWidget{
@@ -41,22 +41,34 @@ class GraphWithDropdown extends StatefulWidget{
 }
 
 class _GraphWithDropdown extends State{
-  String selectedValue = "day";
+  String selectedDate = "day";
+  String selectedMode = "temperature";
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        DropdownButton(
+          value: selectedMode,
+          items: modeSelectorItems,
+          onChanged: (String? newValue){
+            setState(() {
+              selectedMode = newValue!;
+              _createSampleData();
+            });
+          },
+        ),
         Container(
           height: 200,
           child: Graph(_createSampleData(), animate: false),
         ),
         DropdownButton(
-        value: selectedValue,
-        items: dropdownItems,
+        value: selectedDate,
+        items: dateSelectorItems,
       onChanged: (String? newValue){
           setState(() {
-            selectedValue = newValue!;
+            selectedDate = newValue!;
+            _createSampleData();
           });
       },
     ),
@@ -64,32 +76,61 @@ class _GraphWithDropdown extends State{
     );
   }
 
-  static List<charts.Series<TimeSeriesSales, DateTime>> _createSampleData() {
-    final data = [
-      TimeSeriesSales(DateTime(2017, 9, 19), 5),
-      TimeSeriesSales(DateTime(2017, 9, 26), 25),
-      TimeSeriesSales(DateTime(2017, 10, 3), 100),
-      TimeSeriesSales(DateTime(2017, 10, 10), 75),
-    ];
+   List<charts.Series<TimeSeriesSales, DateTime>> _createSampleData() {
+    final List<TimeSeriesSales> data = [];
+    Duration duration = const Duration(days: 0);
+
+    switch(selectedDate){
+      case "day":
+        duration = const Duration(days: 1);
+        break;
+      case "week":
+        duration = const Duration(days: 7);
+        break;
+      case "month":
+        duration = const Duration(days: 28);
+        break;
+      case "year":
+        duration = const Duration(days: 365);
+        break;
+    }
+
+    for(var i = 0; i < _weatherDataJson.length; i++){
+      final today = DateTime.now();
+      DateTime currDateTime = DateTime.parse(_weatherDataJson[i]['created_on']);
+
+      if(today.subtract(duration).isBefore(currDateTime)){
+        data.add(TimeSeriesSales(currDateTime, _weatherDataJson[i][selectedMode]));
+      }
+    }
 
     return [
       charts.Series<TimeSeriesSales, DateTime>(
         id: 'Sales',
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
         domainFn: (TimeSeriesSales sales, _) => sales.time,
-        measureFn: (TimeSeriesSales sales, _) => sales.sales,
+        measureFn: (TimeSeriesSales sales, _) => sales.temperature,
         data: data,
       )
     ];
   }
 
-  List<DropdownMenuItem<String>> get dropdownItems {
+  List<DropdownMenuItem<String>> get dateSelectorItems {
     List<DropdownMenuItem<String>> menuItems = [
       const DropdownMenuItem(value: "day",child: Text("1 day"),),
       const DropdownMenuItem(value: "week",child: Text("1 week"),),
       const DropdownMenuItem(value: "month",child: Text("1 month"),),
       const DropdownMenuItem(value: "year",child: Text("1 year"),),
       const DropdownMenuItem(value: "all",child: Text("All time"),),
+    ];
+
+    return menuItems;
+  }
+
+  List<DropdownMenuItem<String>> get modeSelectorItems {
+    List<DropdownMenuItem<String>> menuItems = [
+      const DropdownMenuItem(value: "temperature",child: Text("temperature"),),
+      const DropdownMenuItem(value: "humidity",child: Text("humidity"),),
     ];
 
     return menuItems;
@@ -103,8 +144,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final url = "https://greenhouse.russellpassmore.me";
-
-
 
   void fetchWeatherData() async {
     try {
@@ -191,6 +230,7 @@ class InfoBox extends StatelessWidget {
     required this.height,
     required this.data
   }) : super(key: key);
+
   final Color color;
   final double width;
   final double height;
