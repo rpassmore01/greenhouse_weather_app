@@ -46,6 +46,8 @@ class _GraphWithDropdown extends State{
 
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+
     return Column(
       children: [
         DropdownButton(
@@ -58,8 +60,8 @@ class _GraphWithDropdown extends State{
             });
           },
         ),
-        Container(
-          height: 200,
+        SizedBox(
+          height: size.height * .35, // Set size of graph here (35% of screen)
           child: Graph(_createSampleData(), animate: false),
         ),
         DropdownButton(
@@ -170,44 +172,59 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-            appBar: AppBar(
-              title: const Text("Greenhouse Weather"),
-            ),
-            body: Column(
-              children: <Widget>[
-                const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    InfoBox(
-                        color: Colors.blue,
-                        width: .85,
-                        height: 90,
-                        data: getInfo("temperature", "Temperature:\n", "°C")),
-                    InfoBox(
-                        color: Colors.red,
-                        width: .85,
-                        height: 90,
-                        data: getInfo("humidity", "Humidity:\n", "%"))
-                  ],
-                ),
-                const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InfoBox(
-                        color: Colors.green,
-                        width: .5,
-                        height: 90,
-                        data: getInfo("created_on", "Recorded At:\n", ""))
-                  ],
-                ),
-                const SizedBox(height: 15),
-                GraphWithDropdown(),
+    //final double width = MediaQuery.of(context).size;
+    return const MaterialApp(
+        home: Home(),
+        title: "Greenhouse Weather",
+    );
+  }
+}
+
+class Home extends StatelessWidget {
+  const Home({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context){
+    Size size = MediaQuery.of(context).size;
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("Greenhouse Weather"),
+        ),
+        body: Column(
+          children: <Widget>[
+            SizedBox(height: size.width * .03),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                InfoBox(
+                    color: Colors.blue,
+                    width: .85,
+                    height: 90,
+                    data: getInfo("temperature", "Temperature:\n", "°C")),
+                InfoBox(
+                    color: Colors.red,
+                    width: .85,
+                    height: 90,
+                    data: getInfo("humidity", "Humidity:\n", "%"))
               ],
-            )));
+            ),
+            SizedBox(height: size.width * .03),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InfoBox(
+                    color: Colors.green,
+                    width: .5,
+                    height: 90,
+                    data: getInfo("created_on", "Recorded At:\n", ""))
+              ],
+            ),
+            SizedBox(height: size.width * .05),
+            GraphWithDropdown(),
+          ],
+        )
+    );
   }
 }
 
