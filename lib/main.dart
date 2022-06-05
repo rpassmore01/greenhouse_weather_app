@@ -1,11 +1,96 @@
 import 'dart:convert';
-
+import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:greenhouse_weather_app/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 void main() {
   runApp(MyApp());
+}
+
+class Graph extends StatelessWidget{
+  final List<charts.Series<dynamic, DateTime>> seriesList;
+  final bool animate;
+
+  const Graph(this.seriesList, {required this.animate});
+
+  @override
+  Widget build(BuildContext context) {
+    return charts.TimeSeriesChart(
+      seriesList,
+      animate: animate,
+      dateTimeFactory: const charts.LocalDateTimeFactory(),
+    );
+  }
+
+}
+
+class TimeSeriesSales {
+  final DateTime time;
+  final int sales;
+
+  TimeSeriesSales(this.time, this.sales);
+}
+
+class GraphWithDropdown extends StatefulWidget{
+  @override
+  _GraphWithDropdown createState() => _GraphWithDropdown();
+}
+
+class _GraphWithDropdown extends State{
+  String selectedValue = "day";
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          height: 200,
+          child: Graph(_createSampleData(), animate: false),
+        ),
+        DropdownButton(
+        value: selectedValue,
+        items: dropdownItems,
+      onChanged: (String? newValue){
+          setState(() {
+            selectedValue = newValue!;
+          });
+      },
+    ),
+      ]
+    );
+  }
+
+  static List<charts.Series<TimeSeriesSales, DateTime>> _createSampleData() {
+    final data = [
+      TimeSeriesSales(DateTime(2017, 9, 19), 5),
+      TimeSeriesSales(DateTime(2017, 9, 26), 25),
+      TimeSeriesSales(DateTime(2017, 10, 3), 100),
+      TimeSeriesSales(DateTime(2017, 10, 10), 75),
+    ];
+
+    return [
+      charts.Series<TimeSeriesSales, DateTime>(
+        id: 'Sales',
+        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        domainFn: (TimeSeriesSales sales, _) => sales.time,
+        measureFn: (TimeSeriesSales sales, _) => sales.sales,
+        data: data,
+      )
+    ];
+  }
+
+  List<DropdownMenuItem<String>> get dropdownItems {
+    List<DropdownMenuItem<String>> menuItems = [
+      const DropdownMenuItem(value: "day",child: Text("1 day"),),
+      const DropdownMenuItem(value: "week",child: Text("1 week"),),
+      const DropdownMenuItem(value: "month",child: Text("1 month"),),
+      const DropdownMenuItem(value: "year",child: Text("1 year"),),
+      const DropdownMenuItem(value: "all",child: Text("All time"),),
+    ];
+
+    return menuItems;
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -39,7 +124,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     fetchWeatherData();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +164,8 @@ class _MyAppState extends State<MyApp> {
                             "Recorded At:\n ${formatDate(_weatherDataJson[_weatherDataJson.length - 1]['created_on'].toString())}")
                   ],
                 ),
+                const SizedBox(height: 15),
+                GraphWithDropdown(),
               ],
             )));
   }
