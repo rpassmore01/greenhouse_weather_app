@@ -85,28 +85,13 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-String formatDate(String date){
-  try{
-    DateTime dateTime = DateTime(
-        int.parse(date.substring(0, 4)),
-        int.parse(date.substring(5, 7)),
-        int.parse(date.substring(8, 10)),
-        int.parse(date.substring(11, 13)),
-        int.parse(date.substring(14, 16)));
-
-    return "${getDayName(dateTime.weekday)} ${getDayMonth(dateTime.month)} ${dateTime.day}\n${dateTime.hour}:${dateTime.minute}";
-
-  }catch(err) {
-    return "ERROR";
-  }
-}
-
 class InfoBox extends StatelessWidget {
-  InfoBox(
-      {required this.color,
-      required this.width,
-      required this.height,
-      required this.data});
+  const InfoBox({Key? key,
+    required this.color,
+    required this.width,
+    required this.height,
+    required this.data
+  }) : super(key: key);
 
   final Color color;
   final double width;

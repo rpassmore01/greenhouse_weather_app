@@ -1,3 +1,20 @@
+// Date & Time Formatting
+String formatDate(String date){
+  try{
+    DateTime dateTime = DateTime(
+        int.parse(date.substring(0, 4)),
+        int.parse(date.substring(5, 7)),
+        int.parse(date.substring(8, 10)),
+        int.parse(date.substring(11, 13)),
+        int.parse(date.substring(14, 16)));
+
+    return "${getDayName(dateTime.weekday)} ${getDayMonth(dateTime.month)} ${dateTime.day}\n${get24HourTime(dateTime.hour, dateTime.minute)}";
+
+  }catch(err) {
+    return "ERROR";
+  }
+}
+
 String getDayName(int weekDay){
   switch(weekDay){
     case 1: return "Sun";
@@ -27,4 +44,20 @@ String getDayMonth(int monthDay){
     case 12: return "Dec";
   }
   return ":(";
+}
+
+String get24HourTime(int hours, int minutes){
+  if(hours > 12) {
+    return "${hours - 12}:${getMinuteFormat(minutes)} PM";
+  }else{
+    return "$hours:${getMinuteFormat(minutes)} AM";
+  }
+}
+
+String getMinuteFormat(int minutes){
+  if(minutes > 9) {
+    return minutes.toString();
+  } else {
+    return "0$minutes";
+  }
 }
