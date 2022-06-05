@@ -8,6 +8,9 @@ void main() {
   runApp(MyApp());
 }
 
+bool isLoaded = false;
+var _weatherDataJson = [];
+
 class Graph extends StatelessWidget{
   final List<charts.Series<dynamic, DateTime>> seriesList;
   final bool animate;
@@ -101,7 +104,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final url = "https://greenhouse.russellpassmore.me";
 
-  var _weatherDataJson = [];
+
 
   void fetchWeatherData() async {
     try {
@@ -113,6 +116,7 @@ class _MyAppState extends State<MyApp> {
 
       setState(() {
         _weatherDataJson = data;
+        isLoaded = true;
       });
     } catch (err) {
       print("Error: ${err}");
@@ -142,14 +146,12 @@ class _MyAppState extends State<MyApp> {
                         color: Colors.blue,
                         width: .85,
                         height: 90,
-                        data:
-                            "Temperature:\n ${_weatherDataJson[_weatherDataJson.length - 1]['temperature'].toString()}°C"),
+                        data: getInfo("temperature", "Temperature:\n", "°C")),
                     InfoBox(
                         color: Colors.red,
                         width: .85,
                         height: 90,
-                        data:
-                            "Humidity:\n ${_weatherDataJson[_weatherDataJson.length - 1]['humidity'].toString()}%")
+                        data: getInfo("humidity", "Humidity:\n", "%"))
                   ],
                 ),
                 const SizedBox(height: 15),
@@ -160,8 +162,7 @@ class _MyAppState extends State<MyApp> {
                         color: Colors.green,
                         width: .5,
                         height: 90,
-                        data:
-                            "Recorded At:\n ${formatDate(_weatherDataJson[_weatherDataJson.length - 1]['created_on'].toString())}")
+                        data: getInfo("created_on", "Recorded At:\n", ""))
                   ],
                 ),
                 const SizedBox(height: 15),
@@ -171,6 +172,18 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+String getInfo(String infoId, String prefix, String suffix){
+  if(!isLoaded) {
+    return "Loading...";
+  }
+
+  if(infoId == "created_on"){
+    return "$prefix${formatDate(_weatherDataJson[_weatherDataJson.length - 1][infoId].toString())}$suffix";
+  }
+
+  return "$prefix${_weatherDataJson[_weatherDataJson.length - 1][infoId].toString()}$suffix";
+}
+
 class InfoBox extends StatelessWidget {
   const InfoBox({Key? key,
     required this.color,
@@ -178,7 +191,6 @@ class InfoBox extends StatelessWidget {
     required this.height,
     required this.data
   }) : super(key: key);
-
   final Color color;
   final double width;
   final double height;
