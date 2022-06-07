@@ -10,49 +10,67 @@ class InfoBoxes extends StatefulWidget {
   _InfoBoxes createState() => _InfoBoxes();
 }
 
-class _InfoBoxes extends State {
+class _InfoBoxes extends State<InfoBoxes> {
+
 
   @override
   Widget build(BuildContext context) {
-    return (Column(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            SingleInfoBox(
-                color: Colors.blue,
-                width: .85,
-                height: 90,
-                data: getInfo("temperature", "Temperature:", "°C")),
-            SingleInfoBox(
-                color: Colors.red,
-                width: .85,
-                height: 90,
-                data: getInfo("humidity", "Humidity:", "%"))
-          ],
-        ),
+    return (
+        ValueListenableBuilder<LoadState>(
+            valueListenable: currLoadState,
 
-        SizedBox(height: displayHeight * 0.3),
+            builder: (context, value, child) {
+              return Column(
+                children: <Widget>[
 
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SingleInfoBox(
-                color: Colors.green,
-                width: .5,
-                height: 90,
-                data: getInfo("created_on", "Recorded At:", ""))
-          ],
-        ),
-      ],
-    ));
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SingleInfoBox(
+                          color: Colors.blue,
+                          width: .85,
+                          height: 90,
+                          data: getInfo("temperature", "Temperature:", "°C")),
+                      SingleInfoBox(
+                          color: Colors.red,
+                          width: .85,
+                          height: 90,
+                          data: getInfo("humidity", "Humidity:", "%"))
+                    ],
+                  ),
+
+                  SizedBox(height: displayHeight * 0.03),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SingleInfoBox(
+                          color: Colors.green,
+                          width: .5,
+                          height: 90,
+                          data: getInfo("created_on", "Recorded At:", ""))
+                    ],
+                  ),
+                ],
+              );
+            }
+        )
+    );
   }
 }
 
 List<Text> getInfo(String infoId, String prefix, String suffix) {
-  if (!isLoaded) {
+  if (currLoadState.value == LoadState.loading) {
     return [
       const Text("Loading...",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500))
+    ];
+  }
+
+  if (currLoadState.value == LoadState.error) {
+    return [
+      const Text("Error!",
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500))
     ];

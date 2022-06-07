@@ -27,14 +27,23 @@ class _GraphWithDropdowns extends State {
           });
         },
       ),
+
       SizedBox(
-        height: displayHeight * .35, // Set size of graph here (35% of screen)
-        child: Graph(
-          _createSampleData(),
-          animate: false,
-          graphMode: selectedMode,
-        ),
+          height: displayHeight * .35, // Set size of graph here (35% of screen)
+          child: ValueListenableBuilder<LoadState>(
+              valueListenable: currLoadState,
+
+              builder: (context, value, child) {
+                return Graph(
+                  _createSampleData(),
+                  animate: false,
+                  graphMode: selectedMode,
+                );
+              }
+          )
       ),
+
+
       DropdownButton(
         value: selectedDate,
         items: dateSelectorItems,

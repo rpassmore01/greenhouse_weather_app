@@ -3,6 +3,7 @@ import 'Utils/weather_data_utils.dart';
 
 import 'elements/info_boxes.dart';
 import 'elements/graph_with_dropdown.dart';
+import 'elements/bottom_buttons.dart';
 
 import 'package:flutter/material.dart';
 
@@ -20,10 +21,10 @@ class _MyAppState extends State<MyApp> {
     loadWeatherData().then((value) {
       setState(() {
         if (value.isEmpty) {
-          isLoaded = false;
+          currLoadState.value = LoadState.error;
         } else {
           weatherDataJson = value;
-          isLoaded = true;
+          currLoadState.value = LoadState.loaded;
         }
       });
     });
@@ -69,32 +70,10 @@ class _Home extends State {
             // Graph
             const GraphWithDropdowns(),
 
-            // Refresh Button
-            // TODO move to its own element class
-            // NOTE: we need to find a new solution to reset state,
-            // as refresh button will not be in the same class
-            TextButton(
-                onPressed: () {
-                  // Reset to defaults, and set state to show loading
-                  isLoaded = false;
-                  weatherDataJson = [];
-                  setState(() {});
+            const RefreshButton(),
 
-                  loadWeatherData().then((value) {
-                    setState(() {
-                      if (value.isEmpty) {
-                        isLoaded = false;
-                      } else {
-                        weatherDataJson = value;
-                        isLoaded = true;
-                      }
-                    });
-                  });
-                },
-                child: const Text('Refresh ⟳'))
           ],
-        )
-    );
+        ));
   }
 }
 
