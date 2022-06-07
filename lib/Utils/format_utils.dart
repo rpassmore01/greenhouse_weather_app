@@ -1,8 +1,12 @@
 // Date & Time Formatting
-String formatDate(String date){
+import 'dart:ffi';
+import 'package:instant/instant.dart';
+
+String formatDateInfo(String date){
   try{
     DateTime dateTime = DateTime.parse(date);
-    return "${getDayName(dateTime.weekday)} ${getDayMonth(dateTime.month)} ${dateTime.day}\n${get24HourTime(dateTime.hour, dateTime.minute)}";
+    DateTime easternTime = dateTimeToZone(zone: "EST", datetime: dateTime);
+    return "${getDayName(easternTime.weekday)} ${getDayMonth(easternTime.month)} ${easternTime.day}\n${get24HourTime(easternTime.hour, easternTime.minute)}";
   }catch(err) {
     return "ERROR";
   }

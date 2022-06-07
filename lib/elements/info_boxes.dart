@@ -81,7 +81,7 @@ List<Text> getInfo(String infoId, String prefix, String suffix) {
       Text(prefix,
           style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w400)),
       Text(
-          "${formatDate(weatherDataJson[weatherDataJson.length - 1][infoId])}$suffix",
+          "${formatDateInfo(weatherDataJson[weatherDataJson.length - 1][infoId])}$suffix",
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w500))
     ];
