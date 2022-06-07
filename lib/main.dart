@@ -60,7 +60,8 @@ class _Home extends State {
         appBar: AppBar(
           title: const Text("Greenhouse Weather"),
         ),
-        body: Column(
+        body: SingleChildScrollView(
+        child: Column(
           children: <Widget>[
             //InfoBoxes
             SizedBox(height: displayWidth * .03),
@@ -70,10 +71,12 @@ class _Home extends State {
             // Graph
             const GraphWithDropdowns(),
 
-            const RefreshButton(),
+            const BottomButtons(),
 
           ],
-        ));
+        )
+        )
+    );
   }
 }
 
