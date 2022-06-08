@@ -29,12 +29,14 @@ class BottomButtons extends StatelessWidget {
               }
             });
           },
-          child: const Text('Refresh ⟳')),
+          child: const Text('Refresh ⟳',
+          style: TextStyle(fontSize: 20))),
           TextButton(
               onPressed: (){
                 Navigator.of(context).push(_createRoute());
               },
-              child: const Text('Highs and Lows'))
+              child: const Text('Highs and Lows',
+              style: TextStyle(fontSize: 20),))
     ]
     )
     );

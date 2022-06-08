@@ -14,8 +14,8 @@ class HighLow extends StatefulWidget {
 class _HighLow extends State {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(),
+    return Stack(
+      children: [Scaffold(
         body: Column(children: <Widget>[
 
           //TODO ADD A COOL TITLE HERE
@@ -42,8 +42,14 @@ class _HighLow extends State {
           const InfoGroup(title: "Last Month:", dayUnits: DayUnits.month),
           const InfoGroup(title: "Last Year:", dayUnits: DayUnits.year),
           const InfoGroup(title: "All Time:", dayUnits: DayUnits.allTime),
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          )
 
-        ]));
+        ]))]);
   }
 }
 

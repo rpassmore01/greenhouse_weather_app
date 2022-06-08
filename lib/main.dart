@@ -57,14 +57,11 @@ class _Home extends State {
     setScreenSize(context);
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Greenhouse Weather"),
-        ),
         body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             //InfoBoxes
-            SizedBox(height: displayWidth * .03),
+            SizedBox(height: displayWidth * .05),
             const InfoBoxes(),
             SizedBox(height: displayHeight * .05),
 
