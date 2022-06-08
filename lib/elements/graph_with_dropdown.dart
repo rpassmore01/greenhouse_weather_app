@@ -1,3 +1,5 @@
+import 'package:greenhouse_weather_app/Utils/weather_data_utils.dart';
+
 import '../Utils/global_variables.dart';
 
 import 'package:charts_flutter/flutter.dart' as charts;
@@ -59,22 +61,7 @@ class _GraphWithDropdowns extends State {
 
   List<charts.Series<GenericTimeSeries, DateTime>> _createSampleData() {
     final List<GenericTimeSeries> data = [];
-    Duration duration = const Duration(days: 0);
-
-    switch (selectedDate) {
-      case "day":
-        duration = const Duration(days: 1);
-        break;
-      case "week":
-        duration = const Duration(days: 7);
-        break;
-      case "month":
-        duration = const Duration(days: 28);
-        break;
-      case "year":
-        duration = const Duration(days: 365);
-        break;
-    }
+    final Duration duration = getDurationFromDayUnits(parseDayUnits(selectedDate));
 
     for (var i = 0; i < weatherDataJson.length; i++) {
       final today = DateTime.now();

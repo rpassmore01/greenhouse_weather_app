@@ -24,3 +24,43 @@ Future<List> loadWeatherData() async{
   }
   return [];
 }
+
+enum WeatherUnits {
+  temperature,
+  humidity
+}
+
+enum DayUnits {
+  day,
+  week,
+  month,
+  year,
+  allTime
+}
+
+DayUnits parseDayUnits(String unit){
+  for(DayUnits parsedUnit in DayUnits.values){
+    if(parsedUnit.name == unit){
+      return parsedUnit;
+    }
+  }
+  return DayUnits.day;
+}
+
+Duration getDurationFromDayUnits(DayUnits units){
+
+  switch (units) {
+    case DayUnits.day:
+      return const Duration(days: 1);
+    case DayUnits.week:
+      return const Duration(days: 7);
+    case DayUnits.month:
+      return const Duration(days: 30);
+    case DayUnits.year:
+      return const Duration(days: 365);
+    case DayUnits.allTime:
+      break;
+  }
+
+  return const Duration(days: 0);
+}
